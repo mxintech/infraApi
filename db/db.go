@@ -11,7 +11,7 @@ import (
 
 var (
 	dbname = os.Getenv("db")
-	pwd    = os.Getenv("pwd")
+	pwd    = os.Getenv("pswd")
 	host   = os.Getenv("host")
 	user   = os.Getenv("user")
 	port   = 5432
