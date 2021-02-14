@@ -14,7 +14,7 @@ var (
 	pwd    = os.Getenv("pwd")
 	host   = os.Getenv("host")
 	user   = os.Getenv("user")
-	port   = os.Getenv("port")
+	port   = 5432
 	url    = fmt.Sprintf("host=%s port=%d dbname=%s user=%s password='%s' sslmode=require", host, port, dbname, user, pwd)
 )
 
