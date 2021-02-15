@@ -23,7 +23,8 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stmt, err := db.Prepare("INSERT INTO users(curp, firstphone, secondphone, firstemail, secondemail, cp) VALUES(?, ?, ?, ?, ?, ?)")
+	stmt, err := db.Prepare(`INSERT INTO users 
+							VALUES (?, ?, ?, ?, ?, ?);`)
 	if err != nil {
 		utils.DisplayMessage(w, models.Message{
 			Message: fmt.Sprintf("%v", err),
@@ -33,7 +34,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	defer stmt.Close()
 
-	results, err := stmt.Exec(user.CP, user.FirstPhone, user.SecondPhone, user.FirstEmail, user.SecondEmail, user.CP)
+	results, err := stmt.Exec(user.Curp, user.FirstPhone, user.SecondPhone, user.FirstEmail, user.SecondEmail, user.CP)
 	if err != nil {
 		utils.DisplayMessage(w, models.Message{
 			Message: fmt.Sprintf("%v", err),
