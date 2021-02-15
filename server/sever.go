@@ -11,11 +11,12 @@ type handler struct{}
 
 // ServeHTTP Handler to api
 // more info and learning resources at: https://benhoyt.com/writings/go-routing/
-func (handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	path := r.RequestURI
 
 	switch path {
 	case "/api/user/register":
+		// h.ServeHTTP(w, r)
 		api.CreateUser(w, r)
 
 	default:
