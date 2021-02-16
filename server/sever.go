@@ -16,7 +16,6 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	switch path {
 	case "/api/user/register":
-		// h.ServeHTTP(w, r)
 		api.CreateUser(w, r)
 
 	default:

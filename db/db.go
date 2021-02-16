@@ -3,11 +3,8 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"net/http"
 	"os"
 
-	"github.com/TheGolurk/infraApi/models"
-	"github.com/TheGolurk/infraApi/utils"
 	_ "github.com/lib/pq" // Postgres Drive
 )
 
@@ -20,23 +17,15 @@ var (
 	url    = fmt.Sprintf("host=%s port=%d dbname=%s user=%s password='%s' sslmode=disable", host, port, dbname, user, pwd)
 )
 
-func GetDatabase(w http.ResponseWriter) *sql.DB {
+func GetDatabase() (*sql.DB, error) {
 	db, err := sql.Open("postgres", url)
 	if err != nil {
-		utils.DisplayMessage(w, models.Message{
-			Message: fmt.Sprintf("%v", err),
-			Code:    http.StatusInternalServerError,
-		})
-		return nil
+		return nil, err
 	}
 
 	if err = db.Ping(); err != nil {
-		utils.DisplayMessage(w, models.Message{
-			Message: fmt.Sprintf("%v", err),
-			Code:    http.StatusInternalServerError,
-		})
-		return nil
+		return nil, err
 	}
 
-	return db
+	return db, nil
 }

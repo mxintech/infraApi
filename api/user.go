@@ -12,7 +12,14 @@ import (
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
-	db := db.GetDatabase(w)
+	db, err := db.GetDatabase()
+	if err != nil {
+		utils.DisplayMessage(w, models.Message{
+			Message: fmt.Sprintf("%s %v", "Error conectando la base de datos", err),
+			Code:    http.StatusBadRequest,
+		})
+		return
+	}
 
 	user, err := models.ValidateUser(r)
 	if err != nil {
@@ -23,8 +30,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	stmt, err := db.Prepare(`INSERT INTO users 
-							VALUES (?, ?, ?, ?, ?, ?);`)
+	stmt, err := db.Prepare(`INSERT INTO users(curp, firstphone, secondphone, firstemail, secondemail, cp) VALUES ($1, $2, $3, $4, $5, $6);`)
 	if err != nil {
 		utils.DisplayMessage(w, models.Message{
 			Message: fmt.Sprintf("%v", err),
@@ -34,7 +40,8 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	defer stmt.Close()
 
-	results, err := stmt.Exec(user.Curp, user.FirstPhone, user.SecondPhone, user.FirstEmail, user.SecondEmail, user.CP)
+	// We don't need the result
+	_, err = stmt.Exec(user.Curp, user.FirstPhone, user.SecondPhone, user.FirstEmail, user.SecondEmail, user.CP)
 	if err != nil {
 		utils.DisplayMessage(w, models.Message{
 			Message: fmt.Sprintf("%v", err),
@@ -43,7 +50,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.DisplayMessage(w, models.Message{
-		Message: fmt.Sprintf("%v", results),
+		Message: "Added! 🎉",
 		Code:    http.StatusCreated,
 	})
 }
