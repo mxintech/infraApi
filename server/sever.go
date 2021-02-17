@@ -1,6 +1,7 @@
 package server
 
 import (
+	"crypto/tls"
 	"log"
 	"net/http"
 
@@ -27,6 +28,8 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // StartServer starts new server mux
 func StartServer() {
+	// WARNING!
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	mux := http.NewServeMux()
 	mux.Handle("/api/", handler{})
 
