@@ -3,8 +3,11 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
+	"sync"
+	"time"
 
 	_ "github.com/lib/pq" // Postgres Drive
 )
@@ -16,18 +19,29 @@ var (
 	user    = os.Getenv("user")
 	port, _ = strconv.Atoi(os.Getenv("port"))
 	url     = fmt.Sprintf("host=%s port=%d dbname=%s user=%s password='%s' sslmode=verify-full", host, port, dbname, user, pwd)
+	conn    *sql.DB
+	once    sync.Once
 )
 
 func GetDatabase() (*sql.DB, error) {
 	fmt.Println(url)
-	db, err := sql.Open("postgres", url)
-	if err != nil {
-		return nil, err
-	}
 
-	if err = db.Ping(); err != nil {
-		return nil, err
-	}
+	var err error
+	once.Do(func() {
+		conn, err = sql.Open("postgres", url)
+		if err != nil {
+			log.Panic(err)
+		}
 
-	return db, nil
+		if err = conn.Ping(); err != nil {
+			log.Panic(err)
+		}
+
+		conn.SetMaxOpenConns(0)
+		conn.SetMaxIdleConns(0)
+		conn.SetConnMaxLifetime(time.Nanosecond)
+
+	})
+
+	return conn, err
 }

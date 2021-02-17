@@ -17,7 +17,11 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	switch path {
 	case "/api/user/register":
-		api.CreateUser(w, r)
+		err := api.CreateUser(w, r)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 	default:
 		w.WriteHeader(http.StatusNotFound)
