@@ -15,10 +15,11 @@ var (
 	host    = os.Getenv("host")
 	user    = os.Getenv("user")
 	port, _ = strconv.Atoi(os.Getenv("port"))
-	url     = fmt.Sprintf("host=%s port=%d dbname=%s user=%s password='%s' sslmode=disable", host, port, dbname, user, pwd)
+	url     = fmt.Sprintf("host=%s port=%d dbname=%s user=%s password='%s' sslmode=verify-full", host, port, dbname, user, pwd)
 )
 
 func GetDatabase() (*sql.DB, error) {
+	fmt.Println(url)
 	db, err := sql.Open("postgres", url)
 	if err != nil {
 		return nil, err
