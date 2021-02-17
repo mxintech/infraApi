@@ -6,14 +6,11 @@ import (
 )
 
 // ValidateUser validates incoming json
-// based in https://github.com/mxintech/RestAPI/blob/main/user/user.go#L21
-func ValidateUser(r *http.Request) (User, error) {
-	user := User{}
-	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		return User{}, err
+func ValidateUser(r *http.Request, v interface{}) error {
+	if err := json.NewDecoder(r.Body).Decode(&v); err != nil {
+		return err
 	}
-	return user, nil
+	return nil
 }
 
 type User struct {

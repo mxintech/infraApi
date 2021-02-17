@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/TheGolurk/infraApi/api"
 )
@@ -34,8 +35,17 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func StartServer() {
 	// WARNING!
 	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	mux := http.NewServeMux()
-	mux.Handle("/api/", handler{})
+	// mux := http.NewServeMux()
+	// had := mux.Handle("/api/", handler{})
 
-	log.Fatal(http.ListenAndServe(":3000", mux))
+	server := http.Server{
+		Addr:              ":3000",
+		ReadTimeout:       2 * time.Minute,
+		WriteTimeout:      2 * time.Minute,
+		ReadHeaderTimeout: 2 * time.Minute,
+		Handler:           handler{},
+	}
+
+	// log.Fatal(http.ListenAndServe(":3000", mux))
+	log.Fatalln(server.ListenAndServe())
 }
