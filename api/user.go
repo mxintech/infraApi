@@ -20,6 +20,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+	defer db.Close()
 
 	user, err := models.ValidateUser(r)
 	if err != nil {
