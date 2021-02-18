@@ -2,23 +2,27 @@ package server
 
 import (
 	"crypto/tls"
+	"database/sql"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/TheGolurk/infraApi/api"
+	"github.com/TheGolurk/infraApi/db"
 )
 
-type handler struct{}
+type handler struct {
+	conn *sql.DB
+}
 
 // ServeHTTP Handler to api
 // more info and learning resources at: https://benhoyt.com/writings/go-routing/
-func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	path := r.RequestURI
 
 	switch path {
 	case "/api/user/register":
-		err := api.CreateUser(w, r)
+		err := api.CreateUser(w, r, h.conn)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -38,12 +42,18 @@ func StartServer() {
 	// mux := http.NewServeMux()
 	// had := mux.Handle("/api/", handler{})
 
+	conn, err := db.GetDatabase()
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
 	server := http.Server{
 		Addr:              ":3000",
-		ReadTimeout:       2 * time.Minute,
-		WriteTimeout:      2 * time.Minute,
-		ReadHeaderTimeout: 2 * time.Minute,
-		Handler:           handler{},
+		ReadTimeout:       10 * time.Minute,
+		WriteTimeout:      10 * time.Minute,
+		ReadHeaderTimeout: 10 * time.Minute,
+		Handler:           &handler{conn: conn},
 	}
 
 	// log.Fatal(http.ListenAndServe(":3000", mux))

@@ -1,25 +1,18 @@
 package api
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
 
-	"github.com/TheGolurk/infraApi/db"
 	"github.com/TheGolurk/infraApi/models"
 	"github.com/TheGolurk/infraApi/utils"
 
 	_ "github.com/lib/pq" // Postgres Driver
 )
 
-var (
-	conn, err = db.GetDatabase()
-)
-
-func CreateUser(w http.ResponseWriter, r *http.Request) error {
-	if err != nil {
-		return errors.New(fmt.Sprintf("Error conectando la base de datos %v", err))
-	}
+func CreateUser(w http.ResponseWriter, r *http.Request, conn *sql.DB) error {
 	//	defer db.Close()
 
 	var user models.User
@@ -45,5 +38,6 @@ func CreateUser(w http.ResponseWriter, r *http.Request) error {
 		Code:    http.StatusCreated,
 	})
 
+	fmt.Println(conn.Stats().OpenConnections)
 	return nil
 }
