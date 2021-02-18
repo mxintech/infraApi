@@ -48,12 +48,11 @@ func StartServer() {
 		return
 	}
 
-	server := http.Server{
-		Addr:              ":3000",
-		ReadTimeout:       1 * time.Hour,
-		WriteTimeout:      1 * time.Hour,
-		ReadHeaderTimeout: 1 * time.Hour,
-		Handler:           &handler{conn: conn},
+	server := &http.Server{
+		ReadTimeout:  5 * time.Millisecond,
+		WriteTimeout: 10 * time.Millisecond,
+		IdleTimeout:  120 * time.Millisecond,
+		Handler:      &handler{conn: conn},
 	}
 
 	// log.Fatal(http.ListenAndServe(":3000", mux))
