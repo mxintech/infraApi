@@ -50,9 +50,9 @@ func StartServer() {
 
 	server := http.Server{
 		Addr:              ":3000",
-		ReadTimeout:       10 * time.Minute,
-		WriteTimeout:      10 * time.Minute,
-		ReadHeaderTimeout: 10 * time.Minute,
+		ReadTimeout:       1 * time.Hour,
+		WriteTimeout:      1 * time.Hour,
+		ReadHeaderTimeout: 1 * time.Hour,
 		Handler:           &handler{conn: conn},
 	}
 

@@ -40,7 +40,6 @@ func GetDatabase() (*sql.DB, error) {
 		conn.SetMaxOpenConns(0)
 		conn.SetMaxIdleConns(0)
 		conn.SetConnMaxLifetime(time.Nanosecond)
-
 	})
 
 	return conn, err
